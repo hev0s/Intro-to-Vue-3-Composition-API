@@ -18,14 +18,17 @@ const variants = ref([{id:2234, color:'green'}, {id:2235, color:'blue'},])
       </div>
       <div class="product-info">
         <h1>{{ product }}</h1>
-        <ul id="details">
-          <li>{{details}}</li>
-        </ul>
-        <div v-for="variant in variants" :key="variant.id">
-
-        </div>
         <p v-if="inStock">In Stock</p>
         <p v-else>Out of Stock</p>
+        <ul>
+          <li v-for="detail in details">{{ detail }}</li>
+        </ul>
+        <div
+            v-for="variant in variants"
+            :key="variant.id"
+        >
+          {{ variant.color }}
+        </div>
       </div>
     </div>
   </div>
