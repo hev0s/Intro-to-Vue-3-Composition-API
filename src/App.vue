@@ -18,9 +18,11 @@ const linkLabel = ref("Voir plus d’infos (CPNV)")
         <div class="product-description">
           <p>{{ description }}</p>
         </div>
-      </div>
-      <div class="product-links">
-        <p>{{ url }}</p>
+        <div class="product-links">
+          <a :href="url" target="_blank" rel="noopener noreferrer">
+            <link rel="stylesheet" href="https://www.cpnv.ch/">https://www.cpnv.ch/
+          </a>
+        </div>
       </div>
     </div>
   </div>
