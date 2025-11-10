@@ -37,11 +37,14 @@ const updateImage = (variantImage) => image.value = variantImage
         <ul>
           <li v-for="detail in details">{{ detail }}</li>
         </ul>
-        <div v-for="variant in variants" 
-          :key="variant.id"
-          @mouseover="updateImage(variant.image)"
+        <div
+            v-for="(variant, index) in variants"
+            :key="variant.id"
+            @mouseover="updateVariant(index)"
+            class="color-circle"
+            :style="{ backgroundColor: variant.color }"
         >
-          {{ variant.color }}
+          <!-- {{ variant.color }} -->
         </div>
         <button class="button" v-on:click="addToCart">Add to cart</button>
       </div>
