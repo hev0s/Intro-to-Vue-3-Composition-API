@@ -10,7 +10,7 @@ const props = defineProps({
     required: true
   }
 })
-
+const emit = defineEmits(['add-to-cart'])
 const product = ref('Socks')
 const brand = ref('Vue Mastery')
 
@@ -44,7 +44,9 @@ const shipping = computed(() => {
   }
 })
 
-const addToCart = () => cart.value += 1
+const addToCart = () => {
+  emit('add-to-cart', variants.value[selectedVariant.value].id)
+}
 
 const updateVariant = (index) => {
   selectedVariant.value = index
