@@ -1,7 +1,12 @@
 <script setup>
 import { ref, computed } from 'vue'
-import socksGreenImage from '@/assets/images/socks_green.jpeg'
-import socksBlueImage from '@/assets/images/socks_blue.jpeg'
+
+import socksGreenImage from '../assets/images/socks_green.jpeg'
+import socksBlueImage from '../assets/images/socks_blue.jpeg'
+
+// components reviews (place ces fichiers dans src/components/)
+import ReviewForm from './ReviewForm.vue'
+import ReviewList from './ReviewList.vue'
 
 const props = defineProps({
   premium: {
@@ -9,12 +14,12 @@ const props = defineProps({
     required: true
   }
 })
-
+const emit = defineEmits(['add-to-cart', 'remove-to-cart'])
 const product = ref('Socks')
 const brand = ref('Vue Mastery')
 
 const selectedVariant = ref(0)
-  
+
 const details = ref(['50% cotton', '30% wool', '20% polyester'])
 
 const variants = ref([
@@ -39,22 +44,37 @@ const shipping = computed(() => {
     return 'Free'
   }
   else {
-    return 2.99
+    return 5.99
   }
 })
 
-const addToCart = () => cart.value += 1
+const addToCart = () => {
+  emit('add-to-cart', variants.value[selectedVariant.value].id)
+}
+
+const removeFromCart = () => {
+  emit('remove-to-cart', variants.value[selectedVariant.value].id)
+}
 
 const updateVariant = (index) => {
   selectedVariant.value = index
+}
+
+/* ---------- Reviews logic ---------- */
+// liste des reviews (vide au départ)
+const reviews = ref([])
+
+// méthode appelée quand ReviewForm émet 'review-submitted'
+function addReview(review) {
+  reviews.value.push(review)
 }
 </script>
 
 <template>
   <div class="product-display">
     <div class="product-container">
-      <div class="product-image">    
-        <img v-bind:src="image">
+      <div class="product-image">
+        <img :src="image" :alt="title">
       </div>
       <div class="product-info">
         <h1>{{ title }}</h1>
@@ -62,25 +82,56 @@ const updateVariant = (index) => {
         <p v-else>Out of Stock</p>
         <p>Shipping: {{ shipping }}</p>
         <ul>
-          <li v-for="detail in details">{{ detail }}</li>
+          <li v-for="(detail, idx) in details" :key="idx">{{ detail }}</li>
         </ul>
-        <div 
-          v-for="(variant, index) in variants" 
-          :key="variant.id"
-          @mouseover="updateVariant(index)"
-          class="color-circle"
-          :style="{ backgroundColor: variant.color }"
+        <div
+            v-for="(variant, index) in variants"
+            :key="variant.id"
+            @mouseover="updateVariant(index)"
+            class="color-circle"
+            :style="{ backgroundColor: variant.color }"
         >
         </div>
         <button
-          class="button" 
-          :class="{ disabledButton: !inStock }"
-          :disabled="!inStock"
-          v-on:click="addToCart"
+            class="button"
+            :class="{ disabledButton: !inStock }"
+            :disabled="!inStock"
+            v-on:click="addToCart"
         >
           Add to cart
         </button>
+        <button
+            class="button"
+            :class="{ disabledButton: !inStock }"
+            :disabled="!inStock"
+            v-on:click="removeFromCart"
+        >
+          Remove from cart
+        </button>
       </div>
     </div>
+
+    <!-- Review list: n'affiche la boîte que s'il y a au moins 1 review -->
+    <review-list v-if="reviews.length" :reviews="reviews" />
+
+    <!-- Formulaire d'ajout d'avis (toujours affiché) -->
+    <review-form @review-submitted="addReview" />
   </div>
 </template>
+
+<style scoped>
+/* tu peux garder tes styles existants ; j'ajoute juste un rappel pour .color-circle */
+.color-circle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 6px;
+  cursor: pointer;
+}
+/* disabledButton si nécessaire */
+.disabledButton {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+</style>
